@@ -40,30 +40,26 @@ def run_guard(gx, gy, walls, R, f, just_walls=False, last=False, wallseen=None):
 
         #print(g)
 
-        tu = (P2(gx, gy),p)
         if (wallseen != None):
             #print(tu)
+            tu = (gx, gy,p)
             while (tu in wallseen.keys()):
 
-                e = wallseen[tu]
+                nextx, nexty, nextp, id = wallseen[tu]
 
-                id = e[1]
-
-                next = e[0]
-                pos = next[0]
                 #print(f"Attempting jump from {tu} to {next}, dir is {id}")
                 #print(f"FAKE REMINDER {f}")
 
                 if (id == 0):
                     if (f.x == gx):
                         #print("SAME LINE")
-                        if (rangecheck(gx, pos.x, f.x)):
+                        if (rangecheck(gx, nextx, f.x)):
                             #print("FAILED JUMP")
                             break
                 else:
                     if (f.y == gy):
                         #print("FAILED JUMP")
-                        if (rangecheck(gy, pos.y, f.y)):
+                        if (rangecheck(gy, nexty, f.y)):
                             break
                 if (tu in seen):
                     loop = True
@@ -71,10 +67,10 @@ def run_guard(gx, gy, walls, R, f, just_walls=False, last=False, wallseen=None):
                     break
                 seen.append(tu)
 
-                tu = next
-                gx = pos.x
-                gy = pos.y
-                p = next[1]
+                tu = (P2(nextx, nexty), nextp)
+                gx = nextx
+                gy = nexty
+                p = nextp
 
                 #print("SUCCESSFUL JUMP") 
             
@@ -140,19 +136,19 @@ def run(data):
     seen, _ = run_guard(gx, gy, walls, R, None)
     
     wallseen, _ = run_guard(gx, gy, walls, R, None, True, True)
-    wallseen = [(P2(gx, gy), 0), *[x for x in wallseen]]
+    wallseen = [(gx, gy, 0), *[(x[0].x, x[0].y, x[1]) for x in wallseen]]
 
-    #print(wallseen)
+    print(wallseen)
     wallt = dict()
     for i in range(len(wallseen)-1):
-        a1 = wallseen[i][0]
-        b1 = wallseen[i+1][0]
-        if (a1.x == b1.x):
-            wallt[wallseen[i]] = (wallseen[i+1], 0)
-        elif (a1.y == b1.y):
-            wallt[wallseen[i]] = (wallseen[i+1], 1)
+        x1, y1, p1 = wallseen[i]
+        x2, y2, p2 = wallseen[i+1]
+        if (x1 == x2):
+            wallt[wallseen[i]] = (*wallseen[i+1], 0)
+        elif (y1 == y2):
+            wallt[wallseen[i]] = (*wallseen[i+1], 1)
 
-    #print(wallt)
+    print(wallt)
 
     p1 = len(set([t[0] for t in seen]))
     works = set()
