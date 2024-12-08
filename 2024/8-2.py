@@ -1,4 +1,5 @@
 import re
+from aocd import get_data
 
 def ints(s):
     return [int(x) for x in re.findall(r"\d+", s)]
