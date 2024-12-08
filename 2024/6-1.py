@@ -29,7 +29,7 @@ a = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 def rangecheck(a, b, c):
     return (a <= c and c <= b) or (b <= c and c <= a)
 
-def run_guard(g, walls, R, f, just_walls=False, last=False, wallseen=None):
+def run_guard(gx, gy, walls, R, f, just_walls=False, last=False, wallseen=None):
     t = 0
     #m1 = -1
     #m2 = 0
@@ -40,7 +40,7 @@ def run_guard(g, walls, R, f, just_walls=False, last=False, wallseen=None):
 
         #print(g)
 
-        tu = (g,p)
+        tu = (P2(gx, gy),p)
         if (wallseen != None):
             #print(tu)
             while (tu in wallseen.keys()):
@@ -49,22 +49,21 @@ def run_guard(g, walls, R, f, just_walls=False, last=False, wallseen=None):
 
                 id = e[1]
 
-
                 next = e[0]
                 pos = next[0]
                 #print(f"Attempting jump from {tu} to {next}, dir is {id}")
                 #print(f"FAKE REMINDER {f}")
 
                 if (id == 0):
-                    if (f.x == g.x):
+                    if (f.x == gx):
                         #print("SAME LINE")
-                        if (rangecheck(g.x, pos.x, f.x)):
+                        if (rangecheck(gx, pos.x, f.x)):
                             #print("FAILED JUMP")
                             break
                 else:
-                    if (f.y == g.y):
+                    if (f.y == gy):
                         #print("FAILED JUMP")
-                        if (rangecheck(g.y, pos.y, f.y)):
+                        if (rangecheck(gy, pos.y, f.y)):
                             break
                 if (tu in seen):
                     loop = True
@@ -73,21 +72,18 @@ def run_guard(g, walls, R, f, just_walls=False, last=False, wallseen=None):
                 seen.append(tu)
 
                 tu = next
-                g = pos
+                gx = pos.x
+                gy = pos.y
                 p = next[1]
 
-                #print("SUCCESSFUL JUMP")
-
+                #print("SUCCESSFUL JUMP") 
             
-            
-        t = g + a[p]
+        t = P2(gx + a[p][0], gy + a[p][1])
         turn = False
 
-        if (t in walls):
-            tu = (t,p)
-                    
+        if (t in walls):                    
             if just_walls:
-                tu = (g,p)
+                tu = (P2(gx, gy),p)
                 if tu in seen:
                     loop = True
                     #print(f"LOOP BREAK: {tu}")
@@ -102,9 +98,10 @@ def run_guard(g, walls, R, f, just_walls=False, last=False, wallseen=None):
         elif (t.x < 0 or t.x >= R or t.y < 0 or t.y >= R):
             break
         else:
-            g = t
+            gx = t.x
+            gy = t.y
         if not just_walls:
-            tu = (g,p)
+            tu = (P2(gx, gy),p)
             if tu in seen:
                 #print(f"LOOP BREAK: {tu}")
 
@@ -113,7 +110,7 @@ def run_guard(g, walls, R, f, just_walls=False, last=False, wallseen=None):
             seen.append(tu)
 
     if (last and not loop):
-        seen.append((g, p))
+        seen.append((P2(gx, gy), p))
 
     return seen, loop
 
@@ -125,7 +122,8 @@ def run(data):
     C = len(data[0])
     assert R == C
 
-    g = None
+    gx = 0
+    gy = 0
 
     walls = set()
     data = [x for x in data if x.strip() != ""]
@@ -134,14 +132,15 @@ def run(data):
         for c, p in enumerate(l):
             k = P2(r,c)
             if p == "^":
-                g = k
+                gx = r
+                gy = c
             elif p == "#":
                 walls.add(k)
 
-    seen, _ = run_guard(g, walls, R, None)
+    seen, _ = run_guard(gx, gy, walls, R, None)
     
-    wallseen, _ = run_guard(g, walls, R, None, True, True)
-    wallseen = [(g, 0), *[x for x in wallseen]]
+    wallseen, _ = run_guard(gx, gy, walls, R, None, True, True)
+    wallseen = [(P2(gx, gy), 0), *[x for x in wallseen]]
 
     #print(wallseen)
     wallt = dict()
@@ -164,14 +163,14 @@ def run(data):
 
         f = ng+a[p]
         #print(f"FAKE {f}, {i/len(seen)}")
-        if (f in walls or f == g or f in works):
+        if (f in walls or f == P2(gx, gy) or f in works):
             continue
         elif (f.x < 0 or f.x >= R or f.y < 0 or f.y >= R):
             continue
 
 
         walls.add(f)
-        _, loop = run_guard(g, walls, R, f, True, wallseen=wallt)
+        _, loop = run_guard(gx, gy, walls, R, f, True, wallseen=wallt)
         if loop:
             works.add(f)
             #print("WORKS")
