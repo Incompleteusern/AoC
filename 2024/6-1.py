@@ -30,16 +30,19 @@ def rangecheck(a, b, c):
     return (a <= c and c <= b) or (b <= c and c <= a)
 
 def run_guard(gx, gy, walls, R, f, just_walls=False, last=False, wallseen=None):
-    t = 0
+    tx = -1
+    ty = -1
     #m1 = -1
     #m2 = 0
     seen = []
     loop = False
     p = 0
+    
     while (not loop):
 
         #print(g)
 
+        # jump ahead -- each time jumping ahead, add the old value to tu
         if (wallseen != None):
             #print(tu)
             tu = (gx, gy,p)
@@ -65,21 +68,24 @@ def run_guard(gx, gy, walls, R, f, just_walls=False, last=False, wallseen=None):
                     loop = True
                     #print(f"LOOP BREAK: {tu}")
                     break
+                
                 seen.append(tu)
 
-                tu = (P2(nextx, nexty), nextp)
+                tu = (nextx, nexty, nextp)
                 gx = nextx
                 gy = nexty
                 p = nextp
 
                 #print("SUCCESSFUL JUMP") 
             
-        t = P2(gx + a[p][0], gy + a[p][1])
+        tx = gx + a[p][0]
+        ty = gy + a[p][1]
         turn = False
 
-        if (t in walls):                    
+        # each time changing directions, add old to seen
+        if (P2(tx, ty) in walls):                    
             if just_walls:
-                tu = (P2(gx, gy),p)
+                tu = (gx, gy, p)
                 if tu in seen:
                     loop = True
                     #print(f"LOOP BREAK: {tu}")
@@ -91,22 +97,25 @@ def run_guard(gx, gy, walls, R, f, just_walls=False, last=False, wallseen=None):
             p = (p + 1) % 4
             #m1, m2 = m2, -m1
             turn = True
-        elif (t.x < 0 or t.x >= R or t.y < 0 or t.y >= R):
-            break
         else:
-            gx = t.x
-            gy = t.y
-        if not just_walls:
-            tu = (P2(gx, gy),p)
-            if tu in seen:
-                #print(f"LOOP BREAK: {tu}")
+            # each time going forward, add old to seen
+            if not just_walls:
+                tu = (gx, gy, p)
+                if tu in seen:
+                    #print(f"LOOP BREAK: {tu}")
 
-                loop = True
+                    loop = True
+                    break
+                seen.append(tu)
+
+            if (tx < 0 or tx >= R or ty < 0 or ty >= R):
                 break
-            seen.append(tu)
+
+            gx = tx
+            gy = ty
 
     if (last and not loop):
-        seen.append((P2(gx, gy), p))
+        seen.append((gx, gy, p))
 
     return seen, loop
 
@@ -134,11 +143,16 @@ def run(data):
                 walls.add(k)
 
     seen, _ = run_guard(gx, gy, walls, R, None)
+    print(seen)
+    #1/0
     
     wallseen, _ = run_guard(gx, gy, walls, R, None, True, True)
-    wallseen = [(gx, gy, 0), *[(x[0].x, x[0].y, x[1]) for x in wallseen]]
+    wallseen = [(gx, gy, 0), *wallseen]
 
-    print(wallseen)
+    import time
+    s = time.time()
+
+    #print(wallseen)
     wallt = dict()
     for i in range(len(wallseen)-1):
         x1, y1, p1 = wallseen[i]
@@ -148,15 +162,13 @@ def run(data):
         elif (y1 == y2):
             wallt[wallseen[i]] = (*wallseen[i+1], 1)
 
-    print(wallt)
+    #print(wallt)
 
-    p1 = len(set([t[0] for t in seen]))
+    p1 = len(set([(x,y) for x,y,p in seen]))
     works = set()
-    import time
-    s = time.time()
-    for i, (ng, p) in enumerate(seen):
+    for i, (x, y, p) in enumerate(seen):
         #print("---------------")
-
+        ng = P2(x,y)
         f = ng+a[p]
         #print(f"FAKE {f}, {i/len(seen)}")
         if (f in walls or f == P2(gx, gy) or f in works):
