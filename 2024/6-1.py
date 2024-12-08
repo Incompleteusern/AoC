@@ -143,7 +143,7 @@ def run(data):
     wallseen, _ = run_guard(g, walls, R, None, True, True)
     wallseen = [(g, 0), *[x for x in wallseen]]
 
-    print(wallseen)
+    #print(wallseen)
     wallt = dict()
     for i in range(len(wallseen)-1):
         a1 = wallseen[i][0]
@@ -153,8 +153,7 @@ def run(data):
         elif (a1.y == b1.y):
             wallt[wallseen[i]] = (wallseen[i+1], 1)
 
-    print(wallt)
-    1/0
+    #print(wallt)
 
     p1 = len(set([t[0] for t in seen]))
     works = set()
