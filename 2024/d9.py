@@ -12,7 +12,80 @@ sub = False
 b = True
 test_f = True
 
+offset = ord("0")
+
 def compact1(l):
+    s = ""
+    t = 0
+    
+    ocount = []
+    for i in [int(x) for x in l]:
+        if (t % 2 == 0):
+            s += (chr(t//2 + offset)*i)
+            ocount.append(i)
+        else:
+            s += " "*i
+        t += 1
+
+    scount = s.count(" ")
+    for i in range(t//2, -1, -1):
+        o = chr(i + offset)
+        oc = ocount[i]
+
+        m = min(oc, scount)
+        s = s.replace(" ", o, m)[:-m]
+        scount -= m
+        if (scount <= 0):
+            break
+
+    k = 0
+    for c, i in enumerate(list(s)):
+        if (ord(i) < offset):
+            continue
+        k += (ord(i)-offset)*c
+    
+    return k
+
+def compact2(l):
+    s = ""
+    t = 0
+    
+    ocount = []
+    oindex = []
+
+    li = 0
+    for i in [int(x) for x in l]:
+        if (t % 2 == 0):
+            s += (chr(t//2 + offset)*i)
+            ocount.append(i)
+            oindex.append(li)
+        else:
+            s += " "*i
+        t += 1
+        li += i
+
+
+    i = t//2 + 1
+    for i in range(t//2, -1, -1):
+        o = chr(i + offset)
+        oi = oindex[i]
+        oc = ocount[i]
+        t = s.find(" "*ocount[i], 0, oi)
+
+        if (t == -1):
+            continue
+        
+        s = s[:t] + o*oc + s[t+oc:].replace(o, " ")
+
+    k = 0
+    for c, i in enumerate(list(s)):
+        if (ord(i) < offset):
+            continue
+        k += (ord(i)-offset)*c
+    
+    return k
+
+def old(l):
     s = []
     t = 0
     
@@ -36,9 +109,7 @@ def compact1(l):
 
     return k
 
-
-
-def compact2(l):
+def old2(l):
     files = []
     spaces = []
     file = 0
