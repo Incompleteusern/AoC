@@ -14,7 +14,6 @@ test2 = None
 test_ans_1 = 2
 test_ans_2 = 4
 sub = True
-b = True
 test_f = True
 
 def check(report):
@@ -45,5 +44,5 @@ def run(data):
 
     return p1, p2
 
-do_run(run, test1, test2, test_ans_1, test_ans_2, sub, iday, iyear, b, test_f)
+do_run(run, test1, test2, test_ans_1, test_ans_2, sub, iday, iyear, test_f)
 

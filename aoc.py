@@ -5,19 +5,17 @@ from collections import defaultdict
 def ints(s):
     return [int(x) for x in re.findall(r"\d+", s)]
     
-def run_test(run, data1, data2, ansA, ansB, run_b):
+def run_test(run, data1, data2, ansA, ansB):
     if (data1 == None):
         print("Skipping Testing!")
         return
     result_a, result_b = run(data1)
-    if (data2 != data1 and run_b):
+    if (data2 != data1):
         _, result_b = run(data2)
 
     t = []
 
-    te = [(result_a, ansA, "Part a")]
-    if run_b:
-        te.append((result_b, ansB, "Part b"))
+    te = [(result_a, ansA, "Part a"), ((result_b, ansB, "Part b"))]
 
 
     for (result, ans, name) in te:
@@ -34,26 +32,24 @@ def run_test(run, data1, data2, ansA, ansB, run_b):
 
     return t
 
-def do_run(run: int, test1: str | None, test2: str | None, test_ans_a: int | None, test_ans_b: int | None, sub: bool, iday: int, iyear: int, run_b, test_f=True):
+def do_run(run: int, test1: str | None, test2: str | None, test_ans_a: int | None, test_ans_b: int | None, sub: bool, iday: int, iyear: int, test_f=True):
     if (test2 == None):
         test2 = test1
     
     data = get_data(day=iday, year=iyear)
         
-    t = run_test(run, test1.split("\n"), test2.split("\n"), test_ans_a, test_ans_b, run_b)
+    t = run_test(run, test1.split("\n"), test2.split("\n"), test_ans_a, test_ans_b)
     if (test_f and not all(t)):
         return
 
-
     ansA, ansB = run(data.split("\n"))
     print(f"Part a Output: {ansA}")
-    if run_b:
-        print(f"Part b Output: {ansB}")
+    print(f"Part b Output: {ansB}")
 
-    if (sub):
+    if (sub and t[0]):
         submit(ansA, part="a", day=iday, year=iyear)
-        if (run_b):
-            submit(ansB, part="b", day=iday, year=iyear)
+    if (sub and t[1]):
+        submit(ansB, part="b", day=iday, year=iyear)
 
 #############
 

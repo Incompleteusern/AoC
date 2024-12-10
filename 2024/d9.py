@@ -9,7 +9,6 @@ test2 = None
 test_ans_1 = 1928
 test_ans_2 = 2858
 sub = False
-b = True
 test_f = True
 
 offset = ord("0")
@@ -172,5 +171,5 @@ def run(data):
         p2 = compact2(l)
 
     return p1, p2
-do_run(run, test1, test2, test_ans_1, test_ans_2, sub, iday, iyear, b, test_f)
+do_run(run, test1, test2, test_ans_1, test_ans_2, sub, iday, iyear, test_f)
 

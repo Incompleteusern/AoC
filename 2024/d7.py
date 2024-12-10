@@ -17,7 +17,6 @@ test2 = None
 test_ans_1 = 3749
 test_ans_2 = 11387
 sub = True
-b = True
 test_f = True
 
 def dpcombine(r, s, c):
@@ -58,5 +57,5 @@ def run(data):
         if (dpcombine(l[0], l[1], True) > 0):
             p2 += l[0]
     return p1, p2
-do_run(run, test1, test2, test_ans_1, test_ans_2, sub, iday, iyear, b, test_f)
+do_run(run, test1, test2, test_ans_1, test_ans_2, sub, iday, iyear, test_f)
 

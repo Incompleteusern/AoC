@@ -9,7 +9,6 @@ test2 = """xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8
 test_ans_1 = 161
 test_ans_2 = 48
 sub = True
-b = True
 test_f = True
 
 def run(data):
@@ -30,5 +29,5 @@ def run(data):
 
     return p1, p2
 
-do_run(run, test1, test2, test_ans_1, test_ans_2, sub, iday, iyear, b, test_f)
+do_run(run, test1, test2, test_ans_1, test_ans_2, sub, iday, iyear, test_f)
 
